@@ -17,8 +17,11 @@ const createWindow = () => {
   ipcMain.on('minimize-win', () => win.minimize())
   ipcMain.on('set-win-ontop', (_, val) => win.setAlwaysOnTop(val))
 
-  // win.loadURL('http://localhost:3000')
-  win.loadFile('build/index.html')
+  if (process.env.NODE_ENV === 'production') {
+    win.loadFile('build/index.html')
+  } else {
+    win.loadURL('http://localhost:3000')
+  }
 }
 
 ipcMain.on('quit-app', () => app.quit())

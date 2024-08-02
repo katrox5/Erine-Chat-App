@@ -14,9 +14,10 @@ type props = {
   prompt: string
   index: number
   answer?: string
+  callback: Function
 }
 
-export default function Karte({ prompt, index, answer }: props) {
+export default function Karte({ prompt, index, answer, callback }: props) {
   const messages = useMessages()
   const contentsDispatch = useContentsDispatch()
   const options = useOptions()
@@ -34,6 +35,10 @@ export default function Karte({ prompt, index, answer }: props) {
     }
     generate()
   }, [])
+
+  useEffect(() => {
+    callback()
+  }, [output])
 
   return (
     <Card hoverable className="cursor-auto">
@@ -88,8 +93,8 @@ export default function Karte({ prompt, index, answer }: props) {
         if (!resp.body || resp.status !== 200) {
           throw new Error()
         }
-        const reader = resp.body.getReader()
-        const decoder = new TextDecoder()
+        const reader = resp.body.pipeThrough(new TextDecoderStream()).getReader()
+        if (!reader) return
 
         let buffer = ''
         while (true) {
@@ -102,10 +107,14 @@ export default function Karte({ prompt, index, answer }: props) {
             })
             break
           }
-          const chunkText = decoder.decode(value)
-          const data = chunkText.split('data: ')[1]
-          buffer += JSON.parse(data)?.result
-          throttleWithLastCall(setOutput)(buffer)
+          if (value) {
+            for (const data of parseData(value)) {
+              buffer += JSON.parse(data)?.result
+              throttleWithLastCall(function () {
+                setOutput(buffer)
+              })()
+            }
+          }
         }
       })
       .catch((_) => {
@@ -123,5 +132,16 @@ export default function Karte({ prompt, index, answer }: props) {
     message.loading('重新生成回答...')
     setOutput('')
     generate()
+  }
+
+  function parseData(value: string) {
+    const regex = /data:\s*(\{.*?\})\s*(?=data:|$)/gs
+    const matches = []
+
+    let match
+    while ((match = regex.exec(value)) !== null) {
+      matches.push(match[1])
+    }
+    return matches
   }
 }

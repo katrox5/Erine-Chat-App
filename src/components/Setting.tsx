@@ -22,7 +22,6 @@ const Setting = forwardRef((_, ref) => {
       footer={null}
       open={modalVisible}
       onCancel={() => setModalVisible(false)}
-      maskClosable={false}
       styles={{ body: { paddingTop: 15 } }}
     >
       <Form

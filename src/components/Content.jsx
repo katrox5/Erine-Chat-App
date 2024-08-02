@@ -11,6 +11,7 @@ export default function Content() {
   const contents = useContents()
   const options = useOptions()
   const modalRef = useRef(null)
+  const inputRef = useRef(null)
 
   return (
     <>
@@ -23,12 +24,22 @@ export default function Content() {
         </Tag>
       )}
       {contents.map(({ prompt, answer }, index) => (
-        <Karte key={index + prompt} prompt={prompt} index={index} answer={answer} />
+        <Karte
+          key={index + prompt}
+          prompt={prompt}
+          index={index}
+          answer={answer}
+          callback={scrollToBottom}
+        />
       ))}
-      <Footer className="mt-4" />
+      <Footer ref={inputRef} className="mt-4" />
       <TokenGetter ref={modalRef} />
     </>
   )
+
+  function scrollToBottom() {
+    inputRef.current?.scrollIntoView()
+  }
 
   function showModal() {
     modalRef.current.show()

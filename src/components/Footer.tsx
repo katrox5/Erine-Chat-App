@@ -1,14 +1,24 @@
 import { useContentsDispatch } from '../contexts/content'
 import { useGenerating } from '../App'
-import { KeyboardEvent, useState } from 'react'
+import { KeyboardEvent, forwardRef, useImperativeHandle, useRef, useState } from 'react'
 import { Button, message } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import { SendOutlined } from '@ant-design/icons'
 
-export default function Footer({ className }: { className: string }) {
+const Footer = forwardRef((props, ref) => {
+  // @ts-ignore
+  const { className } = props
   const contentsDispatch = useContentsDispatch()
   const generating = useGenerating()
   const [prompt, setPrompt] = useState('')
+  const inputRef = useRef(null)
+
+  useImperativeHandle(ref, () => ({
+    scrollIntoView() {
+      // @ts-ignore
+      inputRef.current?.scrollIntoView()
+    },
+  }))
 
   const enter = (event: KeyboardEvent) => {
     if (event.key === 'Enter' && !event.shiftKey) {
@@ -34,7 +44,7 @@ export default function Footer({ className }: { className: string }) {
   }
 
   return (
-    <div className={`flex items-center gap-2 ${className}`}>
+    <div ref={inputRef} className={`flex items-center gap-2 ${className}`}>
       <TextArea
         size="large"
         value={prompt}
@@ -46,4 +56,6 @@ export default function Footer({ className }: { className: string }) {
       <Button icon={<SendOutlined />} size="large" disabled={generating} onClick={generate} />
     </div>
   )
-}
+})
+
+export default Footer
