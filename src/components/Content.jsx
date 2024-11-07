@@ -1,5 +1,4 @@
 import Karte from './Karte'
-import Footer from './Footer'
 import TokenGetter from './TokenGetter'
 import { useContents } from '../contexts/content'
 import { useOptions } from '../contexts/option'
@@ -11,37 +10,25 @@ export default function Content() {
   const contents = useContents()
   const options = useOptions()
   const modalRef = useRef(null)
-  const inputRef = useRef(null)
 
   return (
     <>
       {!options.accessToken && (
-        <Tag icon={<ExclamationCircleOutlined />} color="warning">
-          <span>尚未设置鉴权</span>
+        <Tag icon={<ExclamationCircleOutlined />} color="warning" className="ml-4">
+          <span>尚无鉴权</span>
           <Button type="link" size="small" onClick={showModal}>
-            前往获取
+            设置
           </Button>
         </Tag>
       )}
       {contents.map(({ prompt, answer }, index) => (
-        <Karte
-          key={index + prompt}
-          prompt={prompt}
-          index={index}
-          answer={answer}
-          callback={scrollToBottom}
-        />
+        <Karte key={index} prompt={prompt} index={index} answer={answer} />
       ))}
-      <Footer ref={inputRef} className="mt-4" />
       <TokenGetter ref={modalRef} />
     </>
   )
 
-  function scrollToBottom() {
-    inputRef.current?.scrollIntoView()
-  }
-
   function showModal() {
-    modalRef.current.show()
+    modalRef.current?.show()
   }
 }

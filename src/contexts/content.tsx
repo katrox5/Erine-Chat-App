@@ -17,7 +17,7 @@ export type ContentAction =
 
 const ContentContext = createContext<Content[]>([])
 const MessageContext = createContext<Message[]>([])
-const ContentDispatchContext = createContext<any>(null)
+const ContentDispatchContext = createContext<React.Dispatch<ContentAction> | null>(null)
 
 export default function ContentProvider({ children }: { children: React.ReactElement }) {
   const [contents, contentsDispatch] = useReducer(contentReducer, loadContents())

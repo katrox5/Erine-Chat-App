@@ -16,15 +16,14 @@ const createWindow = () => {
 
   ipcMain.on('minimize-win', () => win.minimize())
   ipcMain.on('set-win-ontop', (_, val) => win.setAlwaysOnTop(val))
+  ipcMain.on('quit-app', () => app.quit())
 
-  if (process.env.NODE_ENV === 'production') {
-    win.loadFile('build/index.html')
+  if (app.isPackaged) {
+    win.loadFile('build/index.html') // production
   } else {
-    win.loadURL('http://localhost:3000')
+    win.loadURL('http://localhost:3000') // development
   }
 }
-
-ipcMain.on('quit-app', () => app.quit())
 
 const store = new Store({ name: 'auth', encryptionKey: 'aes-256-cbc' })
 

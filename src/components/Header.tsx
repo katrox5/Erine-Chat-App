@@ -2,15 +2,16 @@ import { useContentsDispatch } from '../contexts/content'
 import { Avatar, Button, Popconfirm } from 'antd'
 import { ClearOutlined } from '@ant-design/icons'
 
-export default function Header({ className }: { className: string }) {
+export default function Header() {
   const contentsDispatch = useContentsDispatch()
 
   function clearContents() {
-    contentsDispatch({ type: 'clearContents' })
+    contentsDispatch?.({ type: 'clearContents' })
   }
 
   return (
-    <header className={`w-full ${className}`}>
+    <header className="w-full px-4 mb-1 relative">
+      <div className="w-[calc(100%-6px)] h-4 absolute -bottom-4 left-0 bg-gradient-to-t from-transparent to-white z-50" />
       <div className="flex items-center">
         <Avatar
           shape="square"

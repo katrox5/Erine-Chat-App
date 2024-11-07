@@ -33,7 +33,7 @@ const TokenGetter = forwardRef((_, ref) => {
         setModalVisible(false)
         message.success('设置成功')
       })
-      .catch((_) => {
+      .catch(() => {
         message.error('获取失败！请检查参数')
       })
   }
@@ -42,7 +42,7 @@ const TokenGetter = forwardRef((_, ref) => {
     <Modal
       title={
         <Button type="link" size="large" onClick={openLink}>
-          ① 前往获取鉴权参数
+          前往获取鉴权参数
         </Button>
       }
       footer={null}
@@ -73,7 +73,7 @@ const TokenGetter = forwardRef((_, ref) => {
         </Form.Item>
         <Form.Item className="flex justify-end">
           <Button type="primary" htmlType="submit">
-            ② 获取 Access Token
+            确认
           </Button>
         </Form.Item>
       </Form>

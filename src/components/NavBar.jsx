@@ -10,7 +10,7 @@ export default function NavBar({ className }) {
   useEffect(() => window.electronAPI?.setWinOnTop(isWinOnTop), [isWinOnTop])
 
   return (
-    <div className={`drag flex items-center ${className}`}>
+    <nav className={`drag flex items-center ${className}`}>
       <Image width={20} className="ml-2" src="https://bce.bdstatic.com/img/favicon.ico" />
       <Button.Group className="ml-auto no-drag">
         <Button icon={<SettingOutlined />} type="link" onClick={showModal} />
@@ -24,7 +24,7 @@ export default function NavBar({ className }) {
         <Button icon={<CloseOutlined />} type="text" onClick={quitApp} />
       </Button.Group>
       <Setting ref={modalRef} />
-    </div>
+    </nav>
   )
 
   function showModal() {

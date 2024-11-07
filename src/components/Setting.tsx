@@ -1,7 +1,7 @@
-import debounce from '../utils/debounce'
+import { debounce } from '../utils/debounce'
 import { Options, useOptions, useOptionsDispatch } from '../contexts/option'
 import { forwardRef, useImperativeHandle, useState } from 'react'
-import { Button, Form, Modal, Slider } from 'antd'
+import { Button, Form, Modal, Slider, message } from 'antd'
 
 const Setting = forwardRef((_, ref) => {
   const options = useOptions()
@@ -16,6 +16,22 @@ const Setting = forwardRef((_, ref) => {
 
   const formatter = (value: number = 0) => (value / 100).toFixed(2)
 
+  const setValue = (obj: any) =>
+    debounce(() => {
+      for (const key in obj) {
+        optionsDispatch({
+          type: key,
+          value: obj[key],
+        })
+      }
+    })()
+
+  function clearAuth() {
+    setValue({ accessToken: '' })
+    setModalVisible(false)
+    message.success('清除成功')
+  }
+
   return (
     <Modal
       title="设置"
@@ -27,7 +43,7 @@ const Setting = forwardRef((_, ref) => {
       <Form
         name="options"
         initialValues={options}
-        onValuesChange={(val) => debounce(setValue)(val)}
+        onValuesChange={(val) => setValue(val)}
         colon={false}
       >
         <Form.Item<Options>
@@ -63,20 +79,6 @@ const Setting = forwardRef((_, ref) => {
       </Form>
     </Modal>
   )
-
-  function clearAuth() {
-    setValue({ accessToken: '' })
-    setModalVisible(false)
-  }
-
-  function setValue(obj: any) {
-    for (const key in obj) {
-      optionsDispatch({
-        type: key,
-        value: obj[key],
-      })
-    }
-  }
 })
 
 export default Setting

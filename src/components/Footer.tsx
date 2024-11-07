@@ -1,24 +1,14 @@
 import { useContentsDispatch } from '../contexts/content'
-import { useGenerating } from '../App'
-import { KeyboardEvent, forwardRef, useImperativeHandle, useRef, useState } from 'react'
+import { useStatus } from '../App'
+import { KeyboardEvent, useState } from 'react'
 import { Button, message } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import { SendOutlined } from '@ant-design/icons'
 
-const Footer = forwardRef((props, ref) => {
-  // @ts-ignore
-  const { className } = props
+export default function Footer() {
   const contentsDispatch = useContentsDispatch()
-  const generating = useGenerating()
+  const status = useStatus()
   const [prompt, setPrompt] = useState('')
-  const inputRef = useRef(null)
-
-  useImperativeHandle(ref, () => ({
-    scrollIntoView() {
-      // @ts-ignore
-      inputRef.current?.scrollIntoView()
-    },
-  }))
 
   const enter = (event: KeyboardEvent) => {
     if (event.key === 'Enter' && !event.shiftKey) {
@@ -28,7 +18,7 @@ const Footer = forwardRef((props, ref) => {
   }
 
   function generate() {
-    if (generating) {
+    if (status) {
       message.warning('生成中请稍后再试')
       return
     }
@@ -36,7 +26,7 @@ const Footer = forwardRef((props, ref) => {
       message.warning('问题不能为空')
       return
     }
-    contentsDispatch({
+    contentsDispatch?.({
       type: 'addPrompt',
       prompt: prompt.trim(),
     })
@@ -44,7 +34,8 @@ const Footer = forwardRef((props, ref) => {
   }
 
   return (
-    <div ref={inputRef} className={`flex items-center gap-2 ${className}`}>
+    <div className="flex items-center gap-2 px-4 mt-1 relative">
+      <div className="w-[calc(100%-6px)] h-4 absolute -top-4 left-0 bg-gradient-to-b from-transparent to-white z-50" />
       <TextArea
         size="large"
         value={prompt}
@@ -53,9 +44,7 @@ const Footer = forwardRef((props, ref) => {
         placeholder="请输入问题"
         autoSize={{ maxRows: 5 }}
       />
-      <Button icon={<SendOutlined />} size="large" disabled={generating} onClick={generate} />
+      <Button icon={<SendOutlined />} size="large" disabled={!!status} onClick={generate} />
     </div>
   )
-})
-
-export default Footer
+}
